@@ -1,1 +1,4 @@
 *.class
+*.pdf
+*.log
+*.aux

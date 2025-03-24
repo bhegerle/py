@@ -1,0 +1,143 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usepackage[makeroom]{cancel}
+\title{Coordinate Transformations}
+\author{Blake Hegerle}
+
+\renewcommand{\vec}[1]{\boldsymbol{#1}}
+
+\newenvironment{xypic}[1]{
+        \begin{center}
+    \begin{tikzpicture}
+        % \draw[thin,lightgray!40] (-#1,-#1) grid (#1,#1);
+        \draw[<->] (-#1,0)--(#1,0) node[right]{$x$};
+        \draw[<->] (0,-#1)--(0,#1) node[above]{$y$};
+}{
+    \end{tikzpicture}
+\end{center}
+}
+
+\begin{document}
+\section*{Introduction}
+
+A vector is a point in space. 
+
+It is usually drawn as an arrow
+from the origin $(0,0)$ to a point $(x,y)$. 
+
+\textbf{Example}: $\vec v = (1,1)$:
+
+\begin{xypic}{2}
+    \draw[-stealth] (0,0)--(1,1) node[anchor=south west]{$\vec{v}$};
+\end{xypic}
+
+Vectors always start with their tail at the origin $(0,0)$.
+
+The coordinate values depend on where you set the origin
+
+Can use field coordinates: the origin is in the middle of the field.
+
+Can alternately use robot-centric coordinate: the origin is in the middle of the 
+robot.
+
+You can go back and forth from field to robot coordinates. 
+
+\textbf{Example}: The robot is at field vector $\vec r=(1,2)$ and sees a piece 
+at $\vec p=(1.5,-0.5)$. \emph{The 
+second vector is in robot coordinates.} What are
+its field coordinates? It is at $(2.5,1.5)$:
+\begin{xypic}{3}
+    \draw[-stealth] (0,0)--(1,2) node[anchor=south east]{$\vec{r}$};
+    \draw[-stealth] (1,2)--(2.5,1.5) node[anchor=south]{$\vec p$};
+    \draw[-stealth] (0,0)--(2.5,1.5) node[anchor=north west]{};
+\end{xypic}
+Add the $x$ and $y$ values separately: 
+\begin{align*}
+    \vec r+\vec p &=(1,2)+(1.5,-0.5) 
+    &= (1+1.5,2-0.5) \\
+    &= (2.5,1.5)
+\end{align*}
+    
+You can go the other way, too.
+
+\textbf{Example}: A piece is at field vector $\vec q=(2,-1)$.
+What are its robot coordinates? 
+
+Subtract:\begin{align*}
+    \vec q-\vec r &=(2,-1)-(1,2)\\
+                  &=(1,-3)
+\end{align*} 
+\begin{xypic}{3}
+    \draw[<->, dotted] (-3,2)--(3,2) node[right]{$x_r$};
+    \draw[dotted,<->] (1,-3)--(1,3) node[above]{$y_r$};
+    \draw[-stealth] (0,0)--(1,2) node[anchor=south east]{$\vec{r}$};
+    \draw[-stealth] (1,2)--(2,-1) node[anchor=south]{};
+    \draw[-stealth] (0,0)--(2,-1) node[anchor=north west]{$\vec q$};
+\end{xypic}
+
+
+Think about there being different $xy$ axes at centered on the robot in the previous
+drawing.
+The vector $\vec p$ is always the same physical point. The coordinates are all that
+changes.
+
+\section*{Rotation}
+
+What if the robot is turned $-30^\circ$ clockwise? What will be the coordinates of a vector
+$\vec p=(2, 0.5)$ after the rotation?
+
+In robot coordinates, the piece will appear to rotate $+30^\circ$ (counterclockwise).
+
+\begin{xypic}{3}
+    \draw[-stealth] (0,0)--(2, 0.5) node[anchor=east]{$\vec p$};
+    \draw[-stealth] (0,0)--(1.482050808, 1.433012702) node[anchor=east]{$\vec p$};
+    \draw[-stealth,dotted] (2, 0.5) arc (14.03624347:44.03624347:2.061552813) 
+                            node[anchor=west]{$30^\circ$};
+\end{xypic}
+
+This is pretty to easy to figure out if you think about $\vec p$ in polar coordinates.
+
+Before rotating, $\vec p$ is at polar coordinates $(r,\theta)$. 
+After, the new coordinates will be
+$(r,\theta+30^\circ)$.
+Again, the coordinates changed even though the vector did not move physically.
+
+Now, the basic polar coordinate equations are
+\begin{align*}
+    r&=\sqrt{x^2+y^2}\\
+    x&=r\cos\theta\\
+    y&=r\sin\theta
+\end{align*}
+Now for a little algebra; remember your angle addition formula?
+\begin{align*}
+    x_r &= r \cos(\theta+30^\circ)\\
+        &= r(\cos\theta\cos 30^\circ - \sin\theta\sin 30^\circ)\\
+    \cos\theta &= \frac xr\\
+    \sin\theta &= \frac yr\\
+    x_r &= {\cancel r}\left(\frac x{\cancel r}\cos 30^\circ - \frac y{\cancel r}\sin 30^\circ\right)\\
+        &= x\cos 30^\circ - y\sin 30^\circ
+\end{align*}
+
+In exactly the same way, we can derive
+\begin{align*}
+    y_r &= r\sin(\theta+30^\circ)\\
+        &= r(\sin\theta\cos 30^\circ + \cos\theta\sin 30^\circ)\\
+    y_r &= {\cancel r}\left(\frac y{\cancel r}\cos 30^\circ + \frac x{\cancel r}\sin 30^\circ\right)\\
+        &= x\sin 30^\circ + y\cos 30^\circ 
+\end{align*}
+
+Make a note of the coefficients in the final equations:
+\[
+    \begin{bmatrix}
+        \cos 30^\circ & -\sin 30^\circ\\
+        \sin 30^\circ & \cos 30^\circ
+    \end{bmatrix}
+\]
+
+You'll see that again.
+
+You can use these two techniques to do coordinate transformations. 
+As the robot moves left and right, you just need to add or subtract vectors.
+As the robot rotates, you need to use the rotation equations.
+\end{document}
