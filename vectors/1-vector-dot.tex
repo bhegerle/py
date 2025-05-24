@@ -1,0 +1,143 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz}
+\usepackage[makeroom]{cancel}
+\title{Coordinate Transformations}
+\author{Blake Hegerle}
+
+\renewcommand{\vec}[1]{\boldsymbol{#1}}
+
+\newenvironment{xypic}[1]{
+\begin{center}
+    \begin{tikzpicture}
+        % \draw[thin,lightgray!40] (-#1,-#1) grid (#1,#1);
+        \draw[<->] (-#1,0)--(#1,0) node[right]{$x$};
+        \draw[<->] (0,-#1)--(0,#1) node[above]{$y$};
+}{
+    \end{tikzpicture}
+\end{center}
+}
+
+\begin{document}
+\section*{Vector ``Multiplication''}
+
+As you've seen, vectors can be added and subtracted. What about multiplication?
+
+Vectors are completely made up, so you could just continue and \textbf{make 
+up} a multiplication for vectors, with the intention is that it will work
+like as much like regular multiplication as possible. 
+This means we should take multiplication on the number line as a source of 
+inspiration for how multiplication of vectors should work.
+
+A vector has magnitude and direction. Magnitude for regular numbers is very easy:
+just take the absolute value. For direction, consider positive numbers as
+``pointing'' to the right, and negative to the left, so like a vector,
+a number has magnitude and direction.
+\begin{align*}
+    +3 && \text{magnitude} &= 3\\
+    -3 && \text{magnitude} &= 3\\
+    0 && \text{magnitude} &= 0\\
+    x && \text{magnitude} &=|x|
+\end{align*}
+We are going to keep up this pattern, and write
+\[
+    |\vec{v}| = \text{length of vector} = \sqrt{x^2+y^2}
+\]
+
+Back to the number line:
+\begin{align*}
+     2\times 3 &= 6 & \text{right} \times \text{right} &= \text{positive}\\
+     2\times -3 &= -6 & \text{right} \times \text{left} &= \text{negative}\\
+     -2\times 3 &= -6 & \text{left} \times \text{right} &= \text{negative}\\
+     -2\times -3 &= 6 & \text{left} \times \text{left} &= \text{positive}
+\end{align*}
+What is the pattern? The magnitude of the result is always $\pm 6$. If the 
+directions are the same,
+like the first and last rows, then the result is positive. 
+Otherwise, if the directions are opposite, the result is negative.
+\begin{equation}
+    \label{mult-ex-1}
+    \pm 2 \times \pm 3 = 2 \times 3 \times 
+    \begin{cases}
+        1 & \text{same direction} \\
+        -1 & \text{opposite direction}
+    \end{cases}
+\end{equation}
+
+So vector multiplication should follow an analogous rule. 
+Geometrically, two vectors pointing in the ``same direction'' means
+$0^\circ$ between the two vectors. 
+So think about the alignment of these vectors
+\begin{xypic}{2}
+    \draw[-stealth] (0,0)--(1.414216,1.414216) 
+        node[anchor=north west]{$\vec{u}$ length 2};
+    \draw[-stealth] (0,0)--(1.732051,1.732051) 
+        node[anchor=south west]{$\vec{v}$ length 3};
+\end{xypic}
+Since $\vec u$ and $\vec v$ point in exactly the same direction, 
+there are $0^\circ$ degrees between them.
+\begin{xypic}{2}
+    \draw[-stealth] (0,0)--(1.414216,1.414216) 
+        node[anchor=south west]{$\vec{u}$ length 2};
+    \draw[-stealth] (0,0)--(-1.732051,-1.732051) 
+        node[anchor=north east]{$\vec{w}$ length 3};
+\end{xypic}
+Since $\vec u$ and $\vec w$ point in exactly opposite directions, 
+there are $180^\circ$ degrees between them.
+
+So you want function which is:
+\begin{itemize}
+    \item nice and smooth
+    \item equal to $+1$ at $0^\circ$, and also
+    \item equal to $-1$ at $180^\circ$.
+\end{itemize}
+There are an infinite number of functions which fit those requirements, 
+and it is interesting to think about the implications of each choice,
+but let's just stick with the nice, familiar choice of cosine.
+
+Look back at Eq.~\ref{mult-ex-1}, and we're very close to a definition
+for vector multiplication. 
+\[
+    \vec{u} \cdot \vec{v} 
+    = \text{magnitude of } \vec u \times \text{magnitude of } \vec v \times \text{function of angle}
+\]
+Naming the angle between $\vec u$ and $\vec v$ to be $\theta$, this is what we've
+been working toward:
+\begin{equation}
+    \label{mult-ex-2}
+    \vec{u} \cdot \vec{v} 
+    = |\vec u| |\vec v| \cos \theta
+\end{equation}
+
+We'll need to know the cosine of the angle between a vector and the x axis:
+\begin{xypic}{2}
+    \draw[-stealth] (0,0)--(1, 1) 
+        node[anchor=south east]{$\vec{v}$};
+    \draw[-stealth] (0,0)--(1, 0) 
+        node[anchor=north west]{$v_x$};
+    \draw[-stealth] (1,0)--(1, 1) 
+        node[anchor=north west]{$v_y$};
+\end{xypic}
+From this diagram:
+\[
+    \cos\theta = \frac{v_x}{\sqrt{v_x^2+v_y^2}}
+\]
+
+Now a little algebra. Denote the angle between $\vec u$ and the x axis
+as $\theta_u$, likewise $\theta_v$. 
+\begin{align*}
+    \theta &= \theta_u - \theta_v\\
+    |\vec u| |\vec v| \cos \theta 
+    &= |\vec u| |\vec v| \cos (\theta_u - \theta_v)\\
+    &= |\vec u| |\vec v| (\cos\theta_u\cos\theta_v + \sin\theta_u\sin\theta_v)\\
+    &= |\vec u| |\vec v| \left(\frac{u_x}{\sqrt{u_x^2+u_y^2}}\cos\theta_v 
+        + \frac{u_y}{\sqrt{u_x^2+u_y^2}}\sin\theta_v\right)\\
+    &= \sqrt{u_x^2+u_y^2} |\vec v| \left(\frac{u_x}{\sqrt{u_x^2+u_y^2}}\cos\theta_v 
+        + \frac{u_y}{\sqrt{u_x^2+u_y^2}}\sin\theta_v\right)\\
+    &= |\vec v| \left(u_x\cos\theta_v 
+        + u_y\sin\theta_v\right)\\
+    &= u_x v_x + u_y v_y
+\end{align*}
+This is the dot product.
+
+\end{document}
