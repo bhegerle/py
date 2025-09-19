@@ -1,7 +1,7 @@
 import numpy as _np
 import matplotlib.pyplot as _plt
 import math as _m
-import func_guesser as _fg
+import _test.func_guesser as _fg
 
 
 sign = _fg.sign
@@ -13,11 +13,11 @@ def lognorm(sigma):
 
 
 class Simulator:
-    def __init__(self, max_speed, max_accel, drag, noise):
-        self.max_speed = max_speed
-        self.max_accel = max_accel
+    def __init__(self, max_speed_f, max_accel_f, drag_f, noise):
+        self.max_speed_f = max_speed_f
+        self.max_accel_f = max_accel_f
         self.dt = 3 / 1000
-        self.drag = drag
+        self.drag_f = drag_f
         self.noise = noise
 
 
@@ -26,6 +26,10 @@ class Simulator:
         x, v, a, p = _np.zeros_like(t), _np.zeros_like(t), _np.zeros_like(t), _np.zeros_like(t)
 
         for i in range(t.size):
+            max_speed = self.max_speed_f(t[i])
+            max_accel = self.max_accel_f(t[i])
+            drag = self.drag_f(t[i])
+
             if i == 0:
                 x[i] = 0
                 v[i] = v_init
@@ -34,15 +38,15 @@ class Simulator:
                 x[i] = x[i - 1] + v[i - 1] * self.dt
                 v[i] = v[i - 1] + a[i - 1] * self.dt
 
-                p[i] = power(t[i], x[i - 1], v[i - 1], a[i - 1])
+                p[i] = power(t[i], x[i - 1])
                 p[i] = min(max(p[i], -1), 1)
 
-                back_emf = -self.max_accel * v[i - 1] / self.max_speed
-                ad = p[i] * self.max_accel + back_emf
-                d = -self.drag * sign(v[i])
+                back_emf = -max_accel * v[i - 1] / max_speed
+                ad = p[i] * max_accel + back_emf
+                d = -drag * sign(v[i])
 
                 stopped = sign(v[i - 1]) * sign(v[i]) != 1
-                if stopped and abs(ad) < abs(self.drag):
+                if stopped and abs(ad) < abs(drag):
                     a[i] = 0
                     v[i] = 0
                 else:
