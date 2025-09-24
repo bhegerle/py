@@ -1,7 +1,7 @@
 import numpy as _np
 import matplotlib.pyplot as _plt
 import math as _m
-import _test.func_guesser as _fg
+import func_guesser as _fg
 
 
 sign = _fg.sign
